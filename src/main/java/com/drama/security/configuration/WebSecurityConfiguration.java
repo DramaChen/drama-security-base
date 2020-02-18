@@ -1,15 +1,26 @@
 package com.drama.security.configuration;
 
+import com.drama.security.constants.SecurityConstants;
+import com.drama.security.properties.SystemSecurityProperties;
+import com.drama.security.security.handler.SystemAuthenticationFailureHandler;
+import com.drama.security.security.handler.SystemAuthenticationSuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration extends AbstractSecurityConfiguration {
 
+    @Autowired
+    private SystemSecurityProperties systemSecurityProperties;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -18,15 +29,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin() //表单登录
-                //指定自定义登录页面
-                .loginPage("/loginPage.html")
-                //配置登录接口路径，需要与页面form表单的action保持一致
-                .loginProcessingUrl("/authentication/login")
-             .and()
-                .authorizeRequests()
+        applyPasswordAuthenticationConfig(http);
+        http.authorizeRequests()
                 //指定连接，放行对登录页面路径的拦截
-                .antMatchers("/loginPage.html").permitAll()
+                .antMatchers(systemSecurityProperties.getLogin().getLoginPage(),
+                        systemSecurityProperties.getLogin().getLoginProcessUrl(),
+                        SecurityConstants.DEFAULT_UNAUTHENTICATION_URL).permitAll()
                 .anyRequest() //拦截所有请求
                 .authenticated()//都需要进行认证
                 .and()

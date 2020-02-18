@@ -1,4 +1,4 @@
-package com.drama.security.entity;
+package com.drama.security.security.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.util.Collection;
 
 @Data
 @AllArgsConstructor
-public class DramaUserDetail implements UserDetails {
+public class SystemUserDetail implements UserDetails {
 
     private static final long serialVersionUID = 6568115551708367212L;
     /**
