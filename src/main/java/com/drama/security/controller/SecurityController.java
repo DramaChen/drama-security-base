@@ -1,6 +1,7 @@
 package com.drama.security.controller;
 
 import com.drama.security.constants.SecurityConstants;
+import com.drama.security.entity.SocialUserInfo;
 import com.drama.security.entity.vo.JsonResultVO;
 import com.drama.security.properties.SystemSecurityProperties;
 import org.slf4j.Logger;
@@ -12,10 +13,14 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
+import org.springframework.social.connect.Connection;
+import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +42,8 @@ public class SecurityController {
     private RequestCache requestCache = new HttpSessionRequestCache();
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+
+    private ProviderSignInUtils providerSignInUtils;
 
     @Autowired
     private SystemSecurityProperties systemSecurityProperties;
@@ -66,5 +73,22 @@ public class SecurityController {
             }
         }
         return JsonResultVO.failure("访问的服务需要身份验证，请引导用户到登陆页");
+    }
+
+    @GetMapping("/socialUserInfo")
+    public SocialUserInfo get(HttpServletRequest request){
+        SocialUserInfo socialUserInfo = new SocialUserInfo();
+        Connection<?> connection = providerSignInUtils.getConnectionFromSession(new ServletWebRequest(request));
+
+        socialUserInfo.setProviderId(connection.getKey().getProviderId());
+        socialUserInfo.setProviderUserId(connection.getKey().getProviderUserId());
+        socialUserInfo.setHeaderImg(connection.getImageUrl());
+        return socialUserInfo;
+    }
+
+    @GetMapping("/session/invalid")
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)//设置返回的响应码
+    public JsonResultVO sessionInvalid(){
+        return JsonResultVO.error("Session已过期");
     }
 }

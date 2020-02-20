@@ -1,23 +1,16 @@
 package com.drama.security.properties;
 
 import com.drama.security.properties.login.LoginProperties;
+import com.drama.security.properties.social.SocialSecurityProperties;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 
 @ConfigurationProperties(prefix = "drama.security")
+@Data
 public class SystemSecurityProperties {
 
-    public SystemSecurityProperties(){
-        System.out.println("初始化");
-    }
+    public LoginProperties login = new LoginProperties();
 
-    LoginProperties login = new LoginProperties();
-
-    public LoginProperties getLogin() {
-        return login;
-    }
-
-    public void setLogin(LoginProperties login) {
-        this.login = login;
-    }
+    public SocialSecurityProperties social = new SocialSecurityProperties();
 }

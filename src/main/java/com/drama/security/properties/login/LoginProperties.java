@@ -4,6 +4,14 @@ import com.drama.security.constants.SecurityConstants;
 import com.drama.security.constants.SecurityLoginType;
 import lombok.Data;
 
+/**
+ * <pre>
+ *    描述：Security安全登录配置
+ * </pre>
+ * @author ChenJunLin
+ * @version v1.0
+ * @date 2020/2/19 16:51
+ */
 @Data
 public class LoginProperties {
 
@@ -49,4 +57,29 @@ public class LoginProperties {
      * </pre>
      */
     private String loginFailurePage;
+
+    /**
+     * <pre>
+     *     描述：注册页面路径
+     * </pre>
+     */
+    private String signInUrl;
+    /**
+     * <pre>
+     *     描述：最大允许相同用户同时在线数
+     * </pre>
+     */
+    private Integer maximumSessions=1;
+    /**
+     * <pre>
+     *     描述：达到最大session时是否阻断新用户登录
+     * </pre>
+     */
+    private Boolean maxSessionsPreventsLogin=false;
+    /**
+     * <pre>
+     *     描述：Session失效跳转路径
+     * </pre>
+     */
+    private String sessionInvalidUrl="/session/invalid";
 }

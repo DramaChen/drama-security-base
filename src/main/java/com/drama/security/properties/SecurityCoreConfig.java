@@ -1,4 +1,4 @@
-package com.drama.security.configuration;
+package com.drama.security.properties;
 
 import com.drama.security.properties.SystemSecurityProperties;
 import com.drama.security.security.handler.SystemAuthenticationFailureHandler;
